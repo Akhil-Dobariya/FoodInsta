@@ -87,8 +87,16 @@ namespace Mango.Web.Controllers
                 return RedirectToAction(nameof(CouponIndex));
             }
             else
-            {
-                TempData["error"] = response?.Message;
+			{
+				TempData["error"] = response?.Message;
+
+				response = await _couponService.GetCouponByIdAsync(couponDto.CouponId);
+
+				if (response != null && response.IsSuccess)
+				{
+					CouponDto? model = JsonConvert.DeserializeObject<CouponDto>(Convert.ToString(response.Result));
+					return View(model);
+				}
             }
 
             return View(couponDto);
