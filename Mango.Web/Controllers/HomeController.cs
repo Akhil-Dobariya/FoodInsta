@@ -1,5 +1,5 @@
+using IdentityModel;
 using Mango.Web.Models;
-using Mango.Web.Models.Dto;
 using Mango.Web.Service.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +11,11 @@ namespace Mango.Web.Controllers
     public class HomeController : Controller
     {
 		private readonly IProductService _productService;
-
-		public HomeController(IProductService productService)
+        private readonly ICartService _cartService;
+		public HomeController(IProductService productService, ICartService cartService)
 		{
 			_productService = productService;
+            _cartService = cartService;
 		}
 
 		public async Task<IActionResult> Index()
@@ -52,6 +53,43 @@ namespace Mango.Web.Controllers
             }
 
             return View(productDto);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ActionName("ProductDetails")]
+        public async Task<IActionResult> ProductDetails(ProductDTO productDTO)
+        {
+            CartDTO cartDTO = new CartDTO()
+            {
+                CartHeader = new CartHeaderDTO()
+                {
+                    UserId = User.Claims.Where(t => t.Type == JwtClaimTypes.Subject)?.FirstOrDefault()?.Value
+                }
+            };
+
+            CartDetailsDTO cartDetailsDTO = new()
+            {
+                Count = productDTO.Count,
+                ProductId = productDTO.ProductId
+            };
+
+            List<CartDetailsDTO> cartDetailsDTOs = new() { cartDetailsDTO };
+            cartDTO.CartDetails = cartDetailsDTOs;
+
+            ResponseDto? response = await _cartService.UpsertCartAsync(cartDTO);
+
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Item has been added to the Shopping Cart";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+
+            return View(productDTO);
         }
 
         public IActionResult Privacy()

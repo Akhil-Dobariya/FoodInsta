@@ -10,7 +10,7 @@ namespace Mango.Services.ShoppingCartAPI
         {
             var mappingConfig = new MapperConfiguration(config =>
             {
-                config.CreateMap<CartHeader, CartDetailsDTO>().ReverseMap();
+                config.CreateMap<CartHeader, CartHeaderDTO>().ReverseMap();
                 config.CreateMap<CartDetails, CartDetailsDTO>().ReverseMap() ;
             });
 
