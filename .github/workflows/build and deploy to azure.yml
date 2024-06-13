@@ -61,7 +61,7 @@ jobs:
         
   upload:
     runs-on: self-hosted
-
+    needs: build
     steps:
       - name: Upload artifact auth api
         uses: actions/upload-artifact@v4
