@@ -9,7 +9,13 @@ env:
   AZURE_Web_Name: 'productcouponmanagement'
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '6.0.x'                 # set this to the .NET Core version to use
-
+  Path_Auth_API: 'Services.AuthAPI'
+  Path_Coupon_API: 'Services.CouponAPI'
+  Path_Email_API: 'Services.EmailAPI'
+  Path_Product_API: 'Services.ProductAPI'
+  Path_ShoppingCart_API: 'Services.ShoppingCartAPI'
+  Path_Web: 'Web'
+  
 on:
   workflow_dispatch:
 
@@ -35,9 +41,24 @@ jobs:
       - name: echo workspace
         run: echo "workspace - ${{ github.workspace }}"
         
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{ github.workspace }}/myapp
+      - name: dotnet publish auth api
+        run: dotnet publish ./${{env.Path_Auth_API}}/ -c Release -o ${{ github.workspace }}/${{env.Path_Auth_API}}/myapp
 
+      - name: dotnet publish coupon api
+        run: dotnet publish ./${{env.Path_Coupon_API}}/ -c Release -o ${{ github.workspace }}/${{env.Path_Coupon_API}}/myapp
+
+      - name: dotnet publish email api
+        run: dotnet publish ./${{env.Path_Email_API}}/ -c Release -o ${{ github.workspace }}/${{env.Path_Email_API}}/myapp
+
+      - name: dotnet publish product api
+        run: dotnet publish ./${{env.Path_Product_API}}/ -c Release -o ${{ github.workspace }}/${{env.Path_Product_API}}/myapp
+
+      - name: dotnet publish shopping cart api
+        run: dotnet publish ./${{env.Path_ShoppingCart_API}}/ -c Release -o ${{ github.workspace }}/${{env.Path_ShoppingCart_API}}/myapp
+
+      - name: dotnet publish web
+        run: dotnet publish ./${{env.Path_Web}}/ -c Release -o ${{ github.workspace }}/${{env.Path_Web}}/myapp
+            
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
