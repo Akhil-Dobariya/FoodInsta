@@ -138,3 +138,59 @@ jobs:
         with:
           name: web-ui
           path: ${{ github.workspace }}/${{env.Path_Web}}/myapp
+
+  deploy:
+    runs-on: self-hosted
+    needs: download
+    steps:
+      - name: Deploy to Azure - AuthAPI
+        id: deploy-auth-api
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_AuthAPI_Name }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PCMAuthAPI }}
+          package: ${{ github.workspace }}/${{env.Path_Auth_API}}/myapp
+
+      - name: Deploy to Azure - Coupon API
+        id: deploy-coupon-api
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_CouponAPI_Name }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PCMCouponAPI }}
+          package: ${{ github.workspace }}/${{env.Path_Coupon_API}}/myapp
+
+      - name: Deploy to Azure - Email API
+        id: deploy-Email-api
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_EmailAPI_Name }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PCMEmailAPI }}
+          package: ${{ github.workspace }}/${{env.Path_Email_API}}/myapp
+
+      - name: Deploy to Azure - Product API
+        id: deploy-Product-api
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_ProductAPI_Name }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PCMProductAPI }}
+          package: ${{ github.workspace }}/${{env.Path_Product_API}}/myapp
+
+      - name: Deploy to Azure - ShoppingCart API
+        id: deploy-shoppingcart-api
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_ShoppingCartAPI_Name }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PCMShoppingCartAPI }}
+          package: ${{ github.workspace }}/${{env.Path_ShoppingCart_API}}/myapp
+
+      - name: Deploy to Azure - Web UI
+        id: deploy-web-ui
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_Web_Name }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PCMWebUI }}
+          package: ${{ github.workspace }}/${{env.Path_Web}}/myapp
+
+      - name: completion annoucement
+        run: echo "Run Completed"
+      
